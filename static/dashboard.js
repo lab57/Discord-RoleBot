@@ -209,7 +209,7 @@ window.onload = async function() {
     let userInfo = await getUserInfo()
     let userImageURL = await getUserAvatar(userInfo.id, userInfo.avatar)
 
-    const iconId = "a_6d9390fadb6bc1fa5a59ede9cdfe26b6";
+    const iconId = "a_824f9eef349f89034c1e54f088b52958";
     let guildImageURL = await getGuildAvatar("574287921717182505", iconId);
 
     // Only members of this guild can use this bot
@@ -231,7 +231,7 @@ window.onload = async function() {
     // }
 
     // Set identity details
-    document.getElementById("username").innerText = userInfo.username + "#" + userInfo.discriminator
+    document.getElementById("username").innerText = userInfo.username // + "#" + userInfo.discriminator
     document.getElementById("avatar-icon").setAttribute("src", userImageURL !== "null" ? userImageURL : './discord-small.png')
     document.getElementById("guild-icon").setAttribute("src", guildImageURL)
 

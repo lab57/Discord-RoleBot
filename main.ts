@@ -11,24 +11,37 @@ const TEST_GUILD = false
 const DISCORD_API = "https://discord.com/api/"
 const DISCORD_CDN = "https://cdn.discordapp.com/"
 
-const CLIENT_ID = "742765861013553272"
+const CLIENT_ID = "1336515269610176522"
 
 const CLIENT_SECRET = Deno.env.get("DISCORD_SECRET") ?? ""
 const BOT_SECRET = Deno.env.get("BOT_SECRET") ?? ""
 
-const OAUTH_REDIRECT_URL = DEBUG ? "http://localhost:8000/auth" : "https://discord.ltseng.me/auth"
-const OAUTH_REDIRECT = DEBUG ? "http%3A%2F%2Flocalhost%3A8000%2Fauth" : "https%3A%2F%2Fdiscord.ltseng.me%2Fauth"
+console.log(CLIENT_SECRET)
+console.log(BOT_SECRET)
+
+const OAUTH_REDIRECT_URL = DEBUG ? "http://localhost:8000/auth" : "https://cics.lucbarrett.info/auth"
+const OAUTH_REDIRECT = DEBUG ? "http%3A%2F%2Flocalhost%3A8000%2Fauth" : "https%3A%2F%2Fcics.lucbarrett.info%2Fauth"
 const OAUTH_AUTH = `oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${OAUTH_REDIRECT}&response_type=code&scope=identify%20guilds`
 const OAUTH_TOKEN = "oauth2/token"
 
 const GUILD_INFO = {
     id: !TEST_GUILD ? "574287921717182505" : "696781447444299826",
-    icon: "a_5addd83a4328a1a9772c53d1e6c18978"
+    icon: "a_824f9eef349f89034c1e54f088b52958"
+    // icon: "/static/UMASS_seal.png"
 }
 
+async function getGuildInfo() {
+    const response = await fetch(DISCORD_API + "guilds/" + GUILD_INFO.id, {
+        headers: {
+            'Authorization': "Bot " + BOT_SECRET
+        }
+    });
+    const guildData = await response.json();
+    return guildData.icon; // This will give you the current icon hash
+}
 const digitRegex = /^\d+$/;
-const restrictedRegex = /(server|verified|@everyone|umass cics|cics role bot|cics utility|admin|moderator|bot contributor|instructor|uca|\bta\b|class liaison|club officer|----)/i
-const identityRegex = /^(he\/him|she\/her|they\/them|ze\/hir)/i
+const restrictedRegex = /(server|verified|@everyone|umass cics|cics role bot|cics utility|admin|moderator|muted|bot contributor|instructor|uca|\bta\b|class liaison|club officer|----)/i
+const identityRegex = /^(he\/him|she\/her|they\/them|zev\/hir)/i
 const graduationRegex = /^(alumni|graduate student|class of \d{4}|international)/i
 const concentrationRegex = /^(computer science|informatics|mathematics and statistics|computer engineering|non-cs \(other\))/i
 const residenceRegex = /^(zoomer|central|ohill|northeast|southwest|honors|sylvan|off-campus|rap data science|rap ethics society)/i
@@ -199,6 +212,8 @@ router
         console.log(result.status)
         console.log(result.statusText)
 
+        // console.log(awßait result.text())  // Log the error response body
+
         const accessToken: AccessToken = await result.json()
         console.log("Access Token: " + accessToken.access_token + " " + accessToken.expires_in)
 
@@ -218,8 +233,12 @@ router
     .get("/images/:path*", ctx => {
         if (ctx.params && ctx.params.path) {
             console.log("Fetching image: " + ctx.params.path)
+            
             ctx.response.body = DISCORD_CDN + ctx.params.path
+            console.log(ctx.params.path)
+            // ctx.response.body = "UMASS_seal.png"
         }
+        
     })
     .get("/userroles/:userid", async ctx => {
         if (ctx.params && ctx.params.userid) {
